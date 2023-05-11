@@ -1,14 +1,15 @@
 @extends('layouts.app')
 
 @section('title')
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-        <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a>
-        </li>
-        <li class="breadcrumb-item text-sm text-dark active" aria-current="page"><a href="{{route('puskesmas.index')}}">Puskesmas</a> </li>
-    </ol>
-    <h6 class="font-weight-bolder mb-0">{{$puskesmas['puskesmas_name']}} ({{$puskesmas['year']}})</h6>
-</nav>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="javascript:;">Pages</a>
+            </li>
+            <li class="breadcrumb-item text-sm text-dark active" aria-current="page"><a
+                    href="{{ route('puskesmas.index') }}">Puskesmas</a> </li>
+        </ol>
+        <h6 class="font-weight-bolder mb-0">{{ $puskesmas[0]['puskesmas_name'] }} ({{ $puskesmas[0]['year'] }})</h6>
+    </nav>
 @endsection
 
 @section('main')
@@ -19,7 +20,7 @@
                     <div class="card-header pb-0">
                         <div class="row">
                             <div class="col-lg-6 col-7">
-                                <h6>{{$puskesmas['puskesmas_name']}}</h6>
+                                <h6>{{ $puskesmas[0]['puskesmas_name'] }}</h6>
                             </div>
                         </div>
                     </div>
@@ -30,37 +31,48 @@
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Bulan
                                     </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Stunting
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Distribusi Probabilitas
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
+                                {{-- @dd($puskesmas) --}}
                                 @php
-                                    $data = array_slice($puskesmas,2,12);
+                                    $data = array_slice($puskesmas[0], 2, 12);
+                                    // dd($puskesmas);
                                 @endphp
-                            @foreach ($data as $key=>$item)
+                                {{-- @dd($puskesmas) --}}
+                                @foreach ($puskesmas as $item)
+                                    @foreach ($item as $key=>$bulan)
+                                        <tr>
+                                            <td class="align-middle text-center text-sm">{{ $key }}</td>
+                                            <td class="align-middle text-center text-sm">{{$bulan}}</td>
+                                            {{-- <td class="align-middle text-center text-sm">{{$item}}</td> --}}
+                                        </tr>
+                                    @endforeach
+                                @endforeach
                                 <tr>
-                                    <td class="align-middle text-center text-sm">{{$key}}</td>
-                                    <td class="align-middle text-center text-sm">{{$item}}</td>
-                                </tr>
-                            @endforeach
-                            <tr>
-                                <td class="align-middle text-center text-sm">
-                                    Total
-                                </td>
-                                <td class="align-middle text-center text-sm">
-                                    {{$puskesmas['total']}}
-                                </td>
+                                    <td class="align-middle text-center text-sm">
+                                        Total
+                                    </td>
+                                    <td class="align-middle text-center text-sm">
+                                        {{ $puskesmas[0]['total'] }}
+                                    </td>
 
-                            </tr>
+                                </tr>
                             </tbody>
                         </table>
-                        
+
                     </div>
-                    
+
                 </div>
             </div>
-        </div>   
+        </div>
     </div>
 @endsection
