@@ -8,7 +8,7 @@
             <li class="breadcrumb-item text-sm text-dark active" aria-current="page"><a
                     href="{{ route('puskesmas.index') }}">Puskesmas</a> </li>
         </ol>
-        <h6 class="font-weight-bolder mb-0">{{ $puskesmas[0]['puskesmas_name'] }} ({{ $puskesmas[0]['year'] }})</h6>
+        <h6 class="font-weight-bolder mb-0">{{ $puskesmas['puskesmas_name'] }} ({{ $puskesmas['year'] }})</h6>
     </nav>
 @endsection
 
@@ -20,12 +20,12 @@
                     <div class="card-header pb-0">
                         <div class="row">
                             <div class="col-lg-6 col-7">
-                                <h6>{{ $puskesmas[0]['puskesmas_name'] }}</h6>
+                                <h6>{{ $puskesmas['puskesmas_name'] }}</h6>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        <table class="table align-items-center mb-0">
+                        <table class="table align-items-center mb-0" style="overflow: scroll">
                             <thead>
                                 <tr>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -39,30 +39,54 @@
                                         class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Distribusi Probabilitas
                                     </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Distribusi Komulatif
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Interval Acak
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Angka Acak
+                                    </th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Peramalan
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {{-- @dd($puskesmas) --}}
                                 @php
-                                    $data = array_slice($puskesmas[0], 2, 12);
-                                    // dd($puskesmas);
+                                    $data = array_slice($puskesmas, 2, 12);
                                 @endphp
-                                {{-- @dd($puskesmas) --}}
-                                @foreach ($puskesmas as $item)
-                                    @foreach ($item as $key=>$bulan)
-                                        <tr>
-                                            <td class="align-middle text-center text-sm">{{ $key }}</td>
-                                            <td class="align-middle text-center text-sm">{{$bulan}}</td>
-                                            {{-- <td class="align-middle text-center text-sm">{{$item}}</td> --}}
-                                        </tr>
-                                    @endforeach
-                                @endforeach
+                                @for ($i = 0; $i <= 11; $i++)
+                                <tr>
+                                    <td class="align-middle text-center text-sm">{{ date('F', mktime(0, 0, 0, $i+1, 10));  }}</td>
+                                    <td class="align-middle text-center text-sm">{{$data[$i]}}</td>
+                                    <td class="align-middle text-center text-sm">{{$probabilitas[$i]}}</td>
+                                    <td class="align-middle text-center text-sm">{{$komulatif[$i]}}</td>
+                                    <td class="align-middle text-center text-sm">{{$interval[$i][array_key_first($interval[$i])]}} - {{$interval[$i][array_key_last($interval[$i])]}}</td>
+                                    <td class="align-middle text-center text-sm">{{$random[$i]}}</td>
+                                    <td class="align-middle text-center text-sm">{{$peramalan[$i]}}</td>
+                                </tr>
+                                @endfor
                                 <tr>
                                     <td class="align-middle text-center text-sm">
                                         Total
                                     </td>
                                     <td class="align-middle text-center text-sm">
-                                        {{ $puskesmas[0]['total'] }}
+                                        {{ $total['stunting'] }}
+                                    </td>
+                                    <td class="align-middle text-center text-sm">
+                                        {{ $total['probabilitas'] }}
+                                    </td>
+                                    <td colspan="3" class="align-middle text-center text-sm">
+                                        
+                                    </td>
+                                    <td class="align-middle text-center text-sm">
+                                        {{ $total['peramalan'] }}
                                     </td>
 
                                 </tr>

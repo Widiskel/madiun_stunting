@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Puskesmas2020;
+use App\LCG;
 
 class Helper
 {
@@ -50,94 +51,102 @@ class Helper
     }
     public static function distribusi_komulatif($data)
     {
-        $dk=[
-        ];
-        $nx = $data[0];
-        for ($i=0; $i < count($data); $i++) { 
-            if ($i==0) {
-                array_push($dk,$data[$i]);
-                # code...
-            }
-            else {
-                $dn = $data[$i]+$nx;
-                array_push($dk,$dn);
-                # code...
-            }
-            $nx=$data[$i];
-            # code...
-        }
+        $komulatif = [];
 
-        
-        // dd($dk);
-        
-        return $dk;
+        foreach ($data as $key => $value) {
+            if($key == 0){
+                array_push($komulatif,$value);
+            }else{
+                $new_komulatif  = $komulatif[array_key_last($komulatif)]+$value;
+                array_push($komulatif,$new_komulatif);
+            }
+        }
+        return $komulatif;
 
     }
-    public static function interval_acak()
+    public static function interval_acak($komulatif)
     {
-        
-        $angka=[];
-        
-        for ($i=0; $i < 99; $i++) { 
-            array_push($angka,$i);
+        $interval = [];
+        foreach ($komulatif as $key => $value) {
+            if($key == 0){
+                $val = floor($value*100);
+                array_push($interval,array(0,$val));
+            }else{
+                $val = floor($value*100);
+                $new_begining = $interval[array_key_last($interval)][1];
+                array_push($interval,array($new_begining+1,$val));
+            }
         }
-        // dd($angka);
-        $ia=[
-            0 => array_slice($angka,0,8),
-            1 => array_slice($angka,8,11),
-            2 => array_slice($angka,19,7),
-            3 => array_slice($angka,24,9),
-            4 => array_slice($angka,32,5),
-            5 => array_slice($angka,37,6),
-            6 => array_slice($angka,43,8),
-            7 => array_slice($angka,51,9),
-            8 => array_slice($angka,60,4),
-            9 => array_slice($angka,64,9),
-            10 => array_slice($angka,73,4),
-            11 => array_slice($angka,77,9),
+        $result = array();
+        foreach ($interval as $rule) {
+            $result[] = range($rule[0], $rule[1]);
+        }
+        return $result;
+    }
+    public static function randomNumber(){
 
-        ];
-        
-        return $ia;
+        $lcg = new LCG(81, 5, 7, 99);
+        $numbers = array();
+        for ($i = 0; $i <= 11; $i++) {
+            $numbers[$i] = $lcg->getNext();
+        }
+        return $numbers;
+    }
+    public static function peramalan($interval , $angka, $data){
+        // dd($interval,$angka,$data);
+        $peramalan = [];
+        foreach ($angka as $key=>$num) { 
+            foreach ($interval as $index=>$int) {
+                if(in_array($num,$int)){
+                    // dd($num,$int,$data[$key]);
+                    array_push($peramalan,$data[$index]);
+                }
+            }
+        }
+        // dd($peramalan);
+        return $peramalan;
+    }
+    public static function data(){
 
+        $numbers = array(344, 382, 313, 313, 350, 310, 313, 344, 310, 312, 312, 312);
+
+        return $numbers;
     }
     public static function getPuskesmasDetail($id, $table)
     {
         if ($table == 'puskesmas_2020') {
             $puskesmas = Puskesmas2020::where('No', $id)->first();
-            $detail = [ 0 => [
+            $detail =  [
                 'puskesmas_name' => $puskesmas->PUSKESMAS,
                 'year' => 2020,
-                'Januari' => $puskesmas->Januari,
-                'Febuari' => $puskesmas->Febuari,
-                'Maret' => $puskesmas->Maret,
-                'April' => $puskesmas->April,
-                'Mei' => $puskesmas->Mei,
-                'Juni' => $puskesmas->Juni,
-                'July' => $puskesmas->July,
-                'Agustus' => $puskesmas->Agustus,
-                'September' => $puskesmas->September,
-                'Oktober' => $puskesmas->Oktober,
-                'November' => $puskesmas->November,
-                'Desember' => $puskesmas->Desember,
-                'total' => $puskesmas->Januari + $puskesmas->Febuari + $puskesmas->Maret + $puskesmas->April + $puskesmas->Mei + $puskesmas->Juni + $puskesmas->July + $puskesmas->Agustus + $puskesmas->September + $puskesmas->Oktober + $puskesmas->November + $puskesmas->Desember
-
-            ],
-            1 => [              
-            ],
-            2 => [              
-            ],
-            3 => [
-
-            ],
+                0 => $puskesmas->Januari,
+                1 => $puskesmas->Febuari,
+                2 => $puskesmas->Maret,
+                3 => $puskesmas->April,
+                4 => $puskesmas->Mei,
+                5 => $puskesmas->Juni,
+                6 => $puskesmas->July,
+                7 => $puskesmas->Agustus,
+                8 => $puskesmas->September,
+                9 => $puskesmas->Oktober,
+                10 => $puskesmas->November,
+                11 => $puskesmas->Desember,
             ];
-            // dd(array_slice($detail,2,12));
-            // $data['distribusi'] = [ 0=> Helper::distribusi_probabilitas(array_slice($detail,2,12))];
-            $detail[1]= Helper::distribusi_probabilitas(array_slice($detail[0],2,12));
-            $detail[2]= Helper::distribusi_komulatif($detail[1]);
-            $detail[3]= Helper::interval_acak();
-            // dd($detail);
+
+
             $data['puskesmas'] = $detail;
+            $data['probabilitas'] = Helper::distribusi_probabilitas(array_slice($detail,2,12));
+            $data['komulatif'] = Helper::distribusi_komulatif($data['probabilitas']);
+            $data['interval'] = Helper::interval_acak($data['komulatif']);
+            $data['random'] = Helper::randomNumber();
+            $data['peramalan'] = Helper::peramalan($data['interval'],$data['random'],array_slice($data['puskesmas'], 2, 12));
+
+
+            $data['total']=[
+                'stunting' => $puskesmas->Januari + $puskesmas->Febuari + $puskesmas->Maret + $puskesmas->April + $puskesmas->Mei + $puskesmas->Juni + $puskesmas->July + $puskesmas->Agustus + $puskesmas->September + $puskesmas->Oktober + $puskesmas->November + $puskesmas->Desember,
+                'probabilitas' => array_sum($data['probabilitas']),
+                'peramalan' => array_sum($data['peramalan']),
+            ];
         // } elseif ($table == 'puskesmas_2021') {
         //     $puskesmas = Puskesmas2021::where('No', $id)->first();
         //     $detail = [

@@ -17,7 +17,7 @@ class DashboardController extends Controller
     public function show($id)
     {
         $data = Helper::getPuskesmasDetail($id,'puskesmas_2020');
-   
+        // dd($data);
         
         return view('puskesmas.show',$data);
     }
