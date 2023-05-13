@@ -85,7 +85,7 @@
                                     {{ $item->Desember }}
                                 </td>
                                 <td>
-                                    <a href="{{route('puskesmas.show',$item->No)}}" class="btn btn-primary">Detail</a>
+                                    <a href="{{route('puskesmas.get_years_detil',['id_y' => $years, 'id' => $item->No])}}" class="btn btn-primary">Detail</a>
                                 </td>
                                 
                             </tr>

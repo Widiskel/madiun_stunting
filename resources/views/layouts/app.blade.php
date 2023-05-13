@@ -10,6 +10,11 @@
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
+    @if (Route::is('puskesmas.show') || Route::is('puskesmas.get_years_detil'))
+        @php
+            $next = array_slice($data_next_years, 2, 12);
+        @endphp
+    @endif
     @include('layouts.partials.side-navbar')
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
         <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur"
@@ -23,13 +28,13 @@
                     <ul class="navbar-nav  justify-content-end">
                         <li class="nav-item dropdown">
                             {{-- <a href="#" class="nav-link dropdown-toggle user-dropdown-toggle" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> --}}
-                                <i class="fa fa-user me-sm-1"></i>
-                                <span class="d-sm-inline d-none">Endang Sulis Setyowati</span>
+                            <i class="fa fa-user me-sm-1"></i>
+                            <span class="d-sm-inline d-none">Endang Sulis Setyowati</span>
                             {{-- </a> --}}
-                            
+
                         </li>
 
-                        
+
                         <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
                             <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
                                 <div class="sidenav-toggler-inner">
@@ -62,7 +67,8 @@
                 @endif
                 @if (session()->has('error'))
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <span class="alert-text" style="color: white !important"><strong>Error!</strong> {{ session('error') }}</span>
+                        <span class="alert-text" style="color: white !important"><strong>Error!</strong>
+                            {{ session('error') }}</span>
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -83,7 +89,30 @@
     @include('layouts.partials.configurator')
     @include('layouts.partials.script')
 </body>
+@if (Route::is('puskesmas.show') || Route::is('puskesmas.get_years_detil'))
+    <script>
+        Highcharts.chart('container', {
+            title: {
+                text: 'Grafik pembanding data real dan peramalan'
+            },
+            xAxis: {
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+            series: [{
+                data: @json($next),
+                step: 'Data Real',
+                name: 'Data Real'
+            }, {
+                data: @json($peramalan),
+                step: 'Peramalan',
+                name: 'Peramalan'
+            }]
+
+        });
+    </script>
+@endif
 
 @stack('script')
+
 
 </html>

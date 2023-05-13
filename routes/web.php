@@ -16,4 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => '/', 'as' => 'puskesmas.'], function () {
     Route::get('/', 'DashboardController@index')->name('index');
     Route::get('/detail/{id}', 'DashboardController@show')->name('show');
+    Route::get('/puskesmas/{id}', 'DashboardController@get_by_years')->name('get_years');
+    Route::get('/get_years/{id_y}/{id}', 'DashboardController@show_by_years')->name('get_years_detil');
 });

@@ -6,7 +6,7 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="numbers">
-                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Jumlah Produk Hari ini &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                <p class="text-sm mb-0 text-capitalize font-weight-bold">Jumlah Puskesmas &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
                                 <h6 class="font-weight-bolder mb-0">
                                    {{$jumlah_puskesmas}}
                                     {{-- <span class="text-success text-sm font-weight-bolder"></span> --}}
